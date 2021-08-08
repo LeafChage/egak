@@ -21,6 +21,15 @@ OPTIONS:
     -w, --width <number>                                                                           sample image width
 ```
 
+## Example
+```
+$ egak -h 300 -w 300 -o output.png
+output.png
+```
+
+![output](https://user-images.githubusercontent.com/18657444/128619837-d20a2db3-befd-4fde-8111-dedeccdd2273.png)
+
+
 ## Font
 * [ArchitectsDaughter](https://fonts.google.com/specimen/Architects+Daughter#standard-styles)
 
