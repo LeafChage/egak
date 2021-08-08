@@ -64,6 +64,7 @@ fn command() -> Result<(), String> {
         height,
         &format!("{}x{}", width, height),
     );
+    println!("{}", path);
 
     return match result {
         Err(n) => Err(format!("{}", n)),
