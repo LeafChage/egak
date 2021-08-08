@@ -1,11 +1,7 @@
 use image::{ImageResult, Rgb, RgbImage};
-use imageproc::drawing::Canvas;
-use imageproc::drawing::{
-    draw_cross_mut, draw_filled_circle_mut, draw_filled_rect_mut, draw_hollow_circle_mut,
-    draw_hollow_rect_mut, draw_line_segment_mut, draw_text_mut,
-};
-use imageproc::rect::Rect;
-use rusttype::{Font, Scale};
+use imageproc::drawing::{draw_filled_rect_mut, draw_text_mut};
+use imageproc::rect::Rect as ProcRect;
+use rusttype::{point, Font, Rect, Scale};
 use std::path::Path;
 
 pub enum Color {
@@ -41,20 +37,40 @@ pub fn color(c: Color) -> Rgb<u8> {
 pub fn generate(path: &str, c: Rgb<u8>, width: u32, height: u32, text: &str) -> ImageResult<()> {
     let path = Path::new(path);
     let mut image = RgbImage::new(width, height);
-    draw_filled_rect_mut(&mut image, Rect::at(0, 0).of_size(width, height), c);
+    draw_filled_rect_mut(&mut image, ProcRect::at(0, 0).of_size(width, height), c);
 
-    let font =
-        Vec::from(include_bytes!("/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc") as &[u8]);
+    let font = Vec::from(include_bytes!("../../font/ArchitectsDaughter.ttf") as &[u8]);
     let font = Font::try_from_vec(font).unwrap();
+
+    // caliculate font position
+    let scale = Scale::uniform(
+        if width > height {
+            height as f32
+        } else {
+            width as f32
+        } / 4.0,
+    );
+    let point = point(0.0, font.v_metrics(scale).ascent);
+    let glyphs: Vec<Rect<i32>> = font
+        .layout(text, scale, point)
+        .map(|g| g.pixel_bounding_box().unwrap())
+        .collect();
+
+    let first = glyphs.first().unwrap().min;
+    let last = glyphs.last().unwrap().max;
+    let min_y = glyphs.iter().map(|g| g.min.y).min().unwrap();
+    let max_y = glyphs.iter().map(|g| g.max.y).max().unwrap();
+    let h = max_y - min_y;
+    let w = last.x - first.x;
+    let center_x = (width / 2) - (w / 2) as u32 - first.x as u32;
+    let center_y = (height / 2) - (h / 2) as u32 - min_y as u32;
+
     draw_text_mut(
         &mut image,
         color(Color::Black),
-        0,
-        0,
-        Scale {
-            x: 5.0 * 2.0,
-            y: 5.0,
-        },
+        center_x,
+        center_y,
+        scale,
         &font,
         text,
     );
