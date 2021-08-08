@@ -22,7 +22,7 @@ OPTIONS:
 ```
 
 ## Font
-### [ArchitectsDaughter](https://fonts.google.com/specimen/Architects+Daughter#standard-styles)
-[Lisence](./font/Architects Daughter SIL OFL Font License.txt)
+* [ArchitectsDaughter](https://fonts.google.com/specimen/Architects+Daughter#standard-styles)
+
 Thanks you!!
 
