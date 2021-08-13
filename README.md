@@ -1,6 +1,15 @@
 # Egak
 Sample image generator.
 
+## Install
+```
+# Example
+$ git clone git@github.com:LeafChage/egak.git
+$ cd egak
+$ cargo build --release
+$ cp target/release/egak ~/.cargo/bin/egak
+```
+
 ## Usage
 ```sh
 $ egak --help
