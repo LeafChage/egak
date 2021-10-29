@@ -59,7 +59,7 @@ fn command() -> Result<(), String> {
 
     let result = img::generate(
         path,
-        img::color(color),
+        color.rgb(),
         width,
         height,
         &format!("{}x{}", width, height),
@@ -75,11 +75,39 @@ fn command() -> Result<(), String> {
 #[test]
 fn test() {
     img::generate(
-        "./test.png",
-        img::color(Color::Default),
+        "./test0.png",
+        Color::Default.rgb(),
+        10,
+        10,
+        &format!("{}x{}", 10, 10),
+    );
+    img::generate(
+        "./test1.png",
+        Color::Default.rgb(),
+        100,
+        200,
+        &format!("{}x{}", 100, 200),
+    );
+    img::generate(
+        "./test2.png",
+        Color::Default.rgb(),
+        200,
+        100,
+        &format!("{}x{}", 200, 100),
+    );
+    img::generate(
+        "./test3.png",
+        Color::Default.rgb(),
         1200,
         200,
-        &format!("{}x{}", 200, 200),
+        &format!("{}x{}", 1200, 200),
+    );
+    img::generate(
+        "./test4.png",
+        Color::Default.rgb(),
+        200,
+        1200,
+        &format!("{}x{}", 200, 1200),
     );
 }
 
