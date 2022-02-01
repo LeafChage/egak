@@ -12,6 +12,8 @@ fn main() {
     }
 }
 
+const RESOLUTION_4K: (u32, u32) = (4096, 2160);
+
 fn command() -> Result<(), String> {
     let matches = App::new("Sample image generator")
         .version("1.0.0")
@@ -50,12 +52,33 @@ fn command() -> Result<(), String> {
                 )
                 .required(false),
         )
+        .arg(
+            Arg::with_name("force")
+                .short("f")
+                .long("force")
+                .help("allow to generate over 4k resolution (4096x2160)")
+                .value_name("1 | 0")
+                .required(false),
+        )
         .get_matches();
-
     let path = fetch_string(&matches, "output")?;
     let color = fetch_color(&matches)?;
     let width = fetch_u32(&matches, "width")?;
     let height = fetch_u32(&matches, "height")?;
+    let force = if let Ok(f) = fetch_u32(&matches, "force") {
+        f == 1
+    } else {
+        false
+    };
+
+    if !force {
+        let (w_4k, h_4k) = RESOLUTION_4K;
+        if !(width < w_4k && height < h_4k) {
+            return Err(String::from(
+                "must not to generate over 4k resolution, you need to specify force flag = 1.",
+            ));
+        }
+    }
 
     let result = img::generate(
         path,
@@ -112,7 +135,7 @@ fn test() {
 }
 
 fn fetch_string<'a>(matches: &'a ArgMatches, name: &str) -> Result<&'a str, String> {
-    if let Some(path) = matches.value_of("output") {
+    if let Some(path) = matches.value_of(name) {
         Ok(path)
     } else {
         Err(format!("required {}", name))
@@ -120,14 +143,14 @@ fn fetch_string<'a>(matches: &'a ArgMatches, name: &str) -> Result<&'a str, Stri
 }
 
 fn fetch_u32(matches: &ArgMatches, name: &str) -> Result<u32, String> {
-    if let Some(width) = matches.value_of(name) {
-        if let Ok(n) = u32::from_str(width) {
+    if let Some(value) = matches.value_of(name) {
+        if let Ok(n) = u32::from_str(value) {
             Ok(n)
         } else {
-            Err(format!("{} is u32", name))
+            Err(format!("{} is not u32", name))
         }
     } else {
-        Err(String::from("required width"))
+        Err(format!("required {}", name))
     }
 }
 
